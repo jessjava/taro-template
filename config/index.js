@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-commonjs
 const path = require('path')
 
 // NOTE 在 sass 中通过别名（@ 或 ~）引用需要指定路径
@@ -15,8 +16,8 @@ const sassImporter = function(url) {
 }
 
 const config = {
-  projectName: 'taro-yanxuan',
-  date: '2019-2-1',
+  projectName: 'taro-template',
+  date: '2020-06-01',
   designWidth: 750,
   deviceRatio: {
     '640': 2.34 / 2,
@@ -25,22 +26,60 @@ const config = {
   },
   sourceRoot: 'src',
   outputRoot: 'dist',
-  plugins: {
-    babel: {
-      sourceMap: true,
-      presets: [
-        ['env', {
-          modules: false
-        }]
-      ],
-      plugins: [
-        'transform-decorators-legacy',
-        'transform-class-properties',
-        'transform-object-rest-spread'
-      ]
-    },
-    sass: {
-      importer: sassImporter
+
+  // babel、csso、uglify 等配置从 plugins 配置中移出来
+  babel: {
+    sourceMap: true,
+    presets: [['env', { modules: false }]],
+    plugins: [
+      'transform-decorators-legacy',
+      'transform-class-properties',
+      'transform-object-rest-spread',  
+      ['transform-runtime', {
+        "helpers": false,
+        "polyfill": false,
+        "regenerator": true,
+        "moduleName": 'babel-runtime'
+      }]
+    ]
+  },
+
+  sass: {
+    importer: sassImporter
+  },
+
+  // 小程序配置从 weapp 改为 mini，可以删掉很多小配置
+  mini: {
+    // webpackChain (chain, webpack) {},
+    cssLoaderOption: {},
+    postcss: {
+      autoprefixer: {
+        enable: true,
+        config: {
+          browsers: [
+            'last 3 versions',
+            'Android >= 4.1',
+            'ios >= 8'
+          ]
+        }
+      },
+      pxtransform: {
+        enable: true,
+        config: {}
+      },
+      url: {
+        enable: true,
+        config: {
+          limit: 10240 // 设定转换尺寸上限
+        }
+      },
+      cssModules: {
+        enable: false, // 默认为 false，如需使用 css modules 功能，则设为 true
+        config: {
+          namingPattern: 'module', // 转换模式，取值为 global/module
+          generateScopedName: '[name]__[local]___[hash:base64:5]'
+        }
+      }
     }
   },
   defineConstants: {
@@ -58,41 +97,6 @@ const config = {
     patterns: [
     ],
     options: {
-    }
-  },
-  weapp: {
-    module: {
-      postcss: {
-        autoprefixer: {
-          enable: true,
-          config: {
-            browsers: [
-              'last 3 versions',
-              'Android >= 4.1',
-              'ios >= 8'
-            ]
-          }
-        },
-        pxtransform: {
-          enable: true,
-          config: {
-
-          }
-        },
-        url: {
-          enable: true,
-          config: {
-            limit: 10240 // 设定转换尺寸上限
-          }
-        },
-        cssModules: {
-          enable: false, // 默认为 false，如需使用 css modules 功能，则设为 true
-          config: {
-            namingPattern: 'module', // 转换模式，取值为 global/module
-            generateScopedName: '[name]__[local]___[hash:base64:5]'
-          }
-        }
-      }
     }
   },
   h5: {
@@ -144,9 +148,11 @@ const config = {
   }
 }
 
+console.log('process.env.NODE_ENV', process.env.NODE_ENV)
 module.exports = function (merge) {
-  if (process.env.NODE_ENV === 'development') {
-    return merge({}, config, require('./dev'))
-  }
-  return merge({}, config, require('./prod'))
+  return merge({}, config, require('./dev'))
+  // if (process.env.NODE_ENV === 'development') {
+  //   return merge({}, config, require('./dev'))
+  // }
+  // return merge({}, config, require('./prod'))
 }

@@ -21,6 +21,9 @@ function updateStorage(data = {}) {
  * @param {*} options
  */
 export default async function fetch(options) {
+  console.log('options', options);
+  // debugger;
+  // return Promise.resolve({});
   const { url, payload, method = 'GET', showToast = true, autoLogin = true } = options
   const token = await getStorage('token')
   const header = token ? { 'WX-PIN-SESSION': token, 'X-WX-3RD-Session': token } : {}

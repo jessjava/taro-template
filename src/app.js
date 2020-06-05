@@ -1,4 +1,4 @@
-import '@tarojs/async-await'
+// import '@tarojs/async-await'
 import Taro, { Component } from '@tarojs/taro'
 import { Provider } from '@tarojs/redux'
 
@@ -32,7 +32,7 @@ class App extends Component {
     window: {
       backgroundTextStyle: 'light',
       navigationBarBackgroundColor: '#fff',
-      navigationBarTitleText: '网易严选',
+      navigationBarTitleText: 'taro开发模板',
       navigationBarTextStyle: 'black'
     },
     tabBar: {
